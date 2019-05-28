@@ -1,0 +1,11 @@
+{
+  "name": "friends-dai-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "David Mihal <david@dmihal.com>",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.7.0",
+    "koa-router": "^7.4.0"
+  }
+}
