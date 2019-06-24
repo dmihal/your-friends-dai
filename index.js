@@ -51,6 +51,14 @@ router.get('/fail', ctx => {
   };
 });
 
+router.get('/logout', function(ctx) {
+  ctx.logout();
+  ctx.body = {
+    success: true,
+    status: 'logged out',
+  }
+});
+
 router.get('/friends', async ctx => {
   if (!ctx.isAuthenticated()) {
     ctx.body = { error: 'Not authenticated' };
@@ -58,15 +66,20 @@ router.get('/friends', async ctx => {
   }
 
   console.log(ctx.state.user);
-  const response = await fetch(`https://graph.facebook.com/me?fields=friends.limit(100)&access_token=${ctx.state.user.token}`);
+  const response = await fetch(`https://graph.facebook.com/me?fields=friends.limit(100){picture,name}&access_token=${ctx.state.user.token}`);
   const json = await response.json();
-  const friends = json.friends.data.map(friend => {
-    const user = users.getUser(friend.id);
+  const friends = await Promise.all(json.friends.data.map(async _friend => {
+    const user = await users.getUser(_friend.id);
+    console.log(user);
+    const friend = {
+      name: _friend.name,
+      picture: _friend.picture.data.url,
+    };
     if (user) {
       friend.address = user.address;
     }
     return friend;
-  });
+  }));
   ctx.body = {
     friends,
   };
