@@ -1,11 +1,11 @@
 const { Strategy: FacebookStrategy } = require('passport-facebook');
-const passport = require('koa-passport')
+const passport = require('koa-passport');
+const users = require('./users');
 
-const users = {};
 passport.serializeUser((user, done) => { done(null, user.id); });
 passport.deserializeUser((id, done) => {
-  console.log(id);
-  users[id] ? done(null, users[id]) : done('Not found');
+  const user = users.getUser(id);
+  user ? done(null, user) : done(new Error('User not found'));
 });
 
 passport.use(new FacebookStrategy({
@@ -17,7 +17,7 @@ passport.use(new FacebookStrategy({
   },
   (token, tokenSecret, profile, done) => {
     const user = { id: profile.id, profile, token, tokenSecret };
-    users[profile.id] = user;
+    users.addUser(user);
     done(null, user);
-  }
+  },
 ));
