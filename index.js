@@ -37,6 +37,18 @@ router.get('/status', ctx => {
   };
 });
 
+router.get('/success', ctx => {
+  ctx.body = {
+    success: true,
+  };
+});
+
+router.get('/fail', ctx => {
+  ctx.body = {
+    success: false,
+  };
+});
+
 const server = app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });

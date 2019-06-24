@@ -11,10 +11,13 @@ passport.deserializeUser((id, done) => {
 passport.use(new FacebookStrategy({
     clientID: process.env.FB_APP_ID,
     clientSecret: process.env.FB_APP_SECRET,
-    callbackURL: 'http://localhost:' + (process.env.PORT || 1337) + '/auth/facebook/callback'
+    callbackURL: 'http://localhost:' + (process.env.PORT || 1337) + '/auth/facebook/callback',
+    scope: ['user_friends'],
+    profileFields: ['friends'],
   },
   (token, tokenSecret, profile, done) => {
-    users[profile.id] = profile
-    done(null, profile);
+    const user = { id: profile.id, profile, token, tokenSecret };
+    users[profile.id] = user;
+    done(null, user);
   }
 ));
